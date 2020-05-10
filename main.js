@@ -69,10 +69,10 @@ async function main() {
   try {
     let user = await createApiUser()
     let key = await getApiKey(user)
-    console.log("API Information")
-    console.log(`User ID: ${user}`)
-    console.log(`API Key: ${key}`)
+    console.log(`USER_UUID=${user}`)
+    console.log(`API_KEY=${key}`)
   } catch (error) {
+    process.exitCode = 1
     console.log("Something went wrong.", error)
   }
 }
