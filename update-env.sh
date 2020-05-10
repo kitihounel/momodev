@@ -1,4 +1,4 @@
-OUTPUT=$(node main.js)
+OUTPUT=$(node createuser.js)
 if [ $? -eq 0 ]
 then
     for item in $OUTPUT
