@@ -21,8 +21,8 @@ function createApiUser(): Promise<string> {
     }
 
     const req = request(url, options, (res) => {
-      if (res.statusCode < 200 || res.statusCode > 299)
-        reject(`Request rejected with status code: ${res.statusCode}`)
+      if (res.statusCode != 201)
+        reject(`Request failed with status code ${res.statusCode}`)
 
       res.setEncoding("utf8")
       let body = ""
@@ -48,9 +48,9 @@ function getApiKey(user): Promise<string> {
     }
 
     const req = request(url, options, (res) => {
-      if (res.statusCode < 200 || res.statusCode > 299)
-          reject(`Request rejected with status code: ${res.statusCode}`)
-      
+      if (res.statusCode != 201)
+          reject(`Request failed with status code ${res.statusCode}`)
+
       res.setEncoding("utf8")
       let body = ""
       res.on("data", chunk => body += chunk)
@@ -58,7 +58,7 @@ function getApiKey(user): Promise<string> {
         try {
           resolve(JSON.parse(body).apiKey)
         } catch {
-          reject("Invalid server response")
+          reject("Invalid JSON returned by server")
         }
       })
     })
@@ -72,11 +72,11 @@ async function main() {
   try {
     let user = await createApiUser()
     let key = await getApiKey(user)
-    console.log(`USER_UUID=${user}`)
+    console.log(`API_USER=${user}`)
     console.log(`API_KEY=${key}`)
   } catch (error) {
     process.exitCode = 1
-    console.log("Something went wrong.", error)
+    console.log("User and token generation failed:", error)
   }
 }
 
