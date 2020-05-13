@@ -1,15 +1,25 @@
 {
   "name": "momodev-api-user",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kitihounel/momodev-api-user"
   },
-  "author": "",
+  "version": "1.0.0",
+  "description": "Scripts to help testing MTN MoMo API",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --outDir build --target es2018 --module commonjs --moduleResolution node src/*",
+    "tsc:watch": "tsc --outDir build --target es2018 --module commonjs --moduleResolution node --watch src/*",
+    "clear": "rm -R build/*"
+  },
+  "author": "Kitihounel",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
     "uuid": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.1",
+    "typescript": "^3.8.3"
   }
 }

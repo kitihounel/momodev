@@ -1,10 +1,13 @@
-const { v4: uuidv4 } = require("uuid")
-const https = require("https")
-const dotenv = require("dotenv")
+import { request } from "https"
+import { config } from "dotenv"
+import { v4 as uuidv4 } from "uuid"
+import { join, dirname } from "path"
 
-dotenv.config()
+config({
+  path: join(dirname(module.filename), "..", ".env")
+})
 
-function createApiUser() {
+function createApiUser(): Promise<string> {
   return new Promise((resolve, reject) => {
     const user = uuidv4()
     const url = "https://sandbox.momodeveloper.mtn.com/v1_0/apiuser"
@@ -17,7 +20,7 @@ function createApiUser() {
       }
     }
 
-    const req = https.request(url, options, (res) => {
+    const req = request(url, options, (res) => {
       if (res.statusCode < 200 || res.statusCode > 299)
         reject(`Request rejected with status code: ${res.statusCode}`)
 
@@ -33,7 +36,7 @@ function createApiUser() {
   })
 }
 
-function getApiKey(user) {
+function getApiKey(user): Promise<string> {
   return new Promise((resolve, reject) => {
     const url = `https://sandbox.momodeveloper.mtn.com/v1_0/apiuser/${user}/apikey`
     const options = {
@@ -44,7 +47,7 @@ function getApiKey(user) {
       }
     }
 
-    const req = https.request(url, options, (res) => {
+    const req = request(url, options, (res) => {
       if (res.statusCode < 200 || res.statusCode > 299)
           reject(`Request rejected with status code: ${res.statusCode}`)
       

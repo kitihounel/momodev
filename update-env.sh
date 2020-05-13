@@ -1,10 +1,9 @@
-OUTPUT=$(node createuser.js)
-if [ $? -eq 0 ]
-then
-    for item in $OUTPUT
-    do
-        echo $item >> .env
-    done
+OUTPUT=$(node build/createuser.js)
+if [ $? -eq 0 ]; then
+  for item in $OUTPUT
+  do
+    echo $item >> .env
+  done
 else
-    echo $OUTPUT
+  echo $OUTPUT
 fi
