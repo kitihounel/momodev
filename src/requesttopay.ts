@@ -8,8 +8,6 @@ config({
   path: join(dirname(module.filename), "..", ".env")
 })
 
-const targetEnv = "sandbox"
-
 function requestPayment(partyId: string): Promise<PaymentRequestResult> {
   const transactionId = uuidv4()
   const url = "https://sandbox.momodeveloper.mtn.com/collection/v1_0/requesttopay"
@@ -17,9 +15,9 @@ function requestPayment(partyId: string): Promise<PaymentRequestResult> {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      "Ocp-Apim-Subscription-Key": process.env.API_KEY,
+      "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
       "X-Reference-Id": transactionId,
-      "X-Target-Environment": targetEnv,
+      "X-Target-Environment": "sandbox",
     }
   }
   const payload: PaymentRequestPayload = {
@@ -59,8 +57,8 @@ function getPaymentStatus(transactionId: string): Promise<PaymentStatusResponse>
   const options = {
     method: "get",
     headers: {
-      "Ocp-Apim-Subscription-Key": process.env.API_KEY,
-      "X-Target-Environment": targetEnv,
+      "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
+      "X-Target-Environment": "sandbox",
     }
   }
 
@@ -88,7 +86,7 @@ function getPaymentStatus(transactionId: string): Promise<PaymentStatusResponse>
 }
 
 async function main() {
-  const partyId = "46733123455"
+  const partyId = "22966778899"
   let result
 
   try {
@@ -103,23 +101,23 @@ async function main() {
     return
   }
 
-  setInterval(() => {
+  setTimeout(() => {
     let promise = getPaymentStatus(result.transactionId)
     promise.then(obj => {
       switch (obj.statusCode) {
       case 202:
         console.log("Payment status request successful")
         console.log("Transcation status:", JSON.stringify(obj.data, null, 2))
-        break;
+        break
       case 400:
         console.log("Payment status request rejected with 400 as status code")
         break
       case 404:
         console.log(`Transaction with ID ${result.transactionId} not found`)
-        break;
+        break
       case 500:
         console.log("Payment status request failed due to server error.")
-        break;
+        break
        default:
          console.log(`Payment status request ended with ${obj.statusCode} as status code`)
       }

@@ -10,14 +10,14 @@ Create a `.env` file in the root directory with your primary
 subscription key then run `node build/createuser.js`.
 The API user and key generated will then be printed in the console.
 
-```
+```bash
 $ node build/createuser.js
 ```
 
 You can  append the result to your `.env` file if the script was successful.
 An `update-env.sh` script is provided for that. Here is its content.
 
-```
+```bash
 OUTPUT=$(node build/createuser.js)
 if [ $? -eq 0 ]; then
   if [ $(wc -l < .env) -eq 3 ]; then
