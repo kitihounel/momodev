@@ -17,6 +17,7 @@ function requestPayment(partyId: string): Promise<PaymentRequestResult> {
       "Content-Type": "application/json",
       "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
       "X-Reference-Id": transactionId,
+      "Authorization": `Bearer ${process.env.TOKEN}`,
       "X-Target-Environment": "sandbox",
     }
   }
@@ -34,7 +35,6 @@ function requestPayment(partyId: string): Promise<PaymentRequestResult> {
 
   return new Promise((resolve, reject) => {
     const req = request(url, options, (res) => {
-      console.log(res.headers)
       let result = {
         statusCode: res.statusCode,
         responseBody: "",
@@ -57,6 +57,7 @@ function getPaymentStatus(transactionId: string): Promise<PaymentStatusResponse>
   const options = {
     method: "get",
     headers: {
+      "Authorization": `Bearer ${process.env.TOKEN}`,
       "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
       "X-Target-Environment": "sandbox",
     }
@@ -94,6 +95,7 @@ async function main() {
     if (result.statusCode != 202) {
       console.error(`Payment request failed with status code ${result.statusCode}`)
       console.log(`Response body: ${result.responseBody}`)
+      console.log(result)
       return
     }
   } catch (error) {
@@ -105,7 +107,7 @@ async function main() {
     let promise = getPaymentStatus(result.transactionId)
     promise.then(obj => {
       switch (obj.statusCode) {
-      case 202:
+      case 200:
         console.log("Payment status request successful")
         console.log("Transcation status:", JSON.stringify(obj.data, null, 2))
         break
