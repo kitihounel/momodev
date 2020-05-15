@@ -1,4 +1,4 @@
-OUTPUT=$(node build/createuser.js)
+OUTPUT=$(node build/createUser.js)
 if [ $? -eq 0 ]; then
   if [ $(wc -l < .env) -gt 1 ]; then
     # Remove all lines except the first from file.

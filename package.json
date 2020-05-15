@@ -11,7 +11,7 @@
     "build": "tsc --outDir build --target es2018 --module commonjs --moduleResolution node src/*",
     "build:watch": "tsc --outDir build --target es2018 --module commonjs --moduleResolution node --watch src/*",
     "clear": "rm -R build/*",
-    "rtp": "node build/requesttopay.js"
+    "rtp": "node build/requestToPay.js"
   },
   "author": "Kitihounel",
   "license": "ISC",

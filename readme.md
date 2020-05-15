@@ -7,11 +7,11 @@ This will create a `build` directory with the scripts.
 
 ## Create User
 Create a `.env` file in the root directory with your primary
-subscription key then run `node build/createuser.js`.
+subscription key then run `node build/createUser.js`.
 The API user and key generated will then be printed in the console.
 
 You can  append the result to your `.env` file if the script was successful.
-An `update-env.sh` script is provided for that. Here is its content.
+An `update-user.sh` script is provided for that.
 
 ## Get Authorization Token
 To generate authorization token, use the `update-token.sh` script.
