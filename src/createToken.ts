@@ -8,7 +8,7 @@ config({
 
 function createToken(): Promise<any> {
   return new Promise((resolve, reject) => {
-    const buf = Buffer.from(`${process.env.API_USER}: ${process.env.API_KEY}`)
+    const buf = Buffer.from(`${process.env.API_USER}:${process.env.API_KEY}`)
     const auth = `Basic ${buf.toString("base64")}`
 
     const options = {
@@ -19,7 +19,13 @@ function createToken(): Promise<any> {
         "Authorization": auth,
         "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
       },
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
+      beforeRedirect: (options) => {
+        options.headers = {
+          "Authorization": auth,
+          "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
+        }
+      }
     }
 
     const req = https.request(options, (res) => {
@@ -41,8 +47,8 @@ async function main() {
   try {
     let obj = await createToken()
     if (obj.statusCode == 200) {
-      const token = JSON.parse(obj.body)
-      console.log(`TOKEN=${token}`)
+      const data = JSON.parse(obj.body)
+      console.log(`TOKEN=${data.access_token}`)
     } else {
       process.exitCode = 1
       console.log(`Token request failed with status code ${obj.statusCode}`)
