@@ -18,7 +18,8 @@ function createToken(): Promise<any> {
       headers: {
         "Authorization": auth,
         "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
-      }
+      },
+      rejectUnauthorized: false
     }
 
     const req = https.request(options, (res) => {
