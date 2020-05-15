@@ -1,8 +1,13 @@
 # momodev-api-user
 NodeJS scripts to help testing MTN MoMo API.
 
+## Requirements
+You will need the following packages:
+  - curl
+  - jq
+
 # First step
-Start by running `npm run build` to compile the source files.
+Start by running `npm install` and `npm run build` to compile the source files.
 This will create a `build` directory with the scripts.
 
 ## Create User
