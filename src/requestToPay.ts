@@ -1,4 +1,3 @@
-import { PaymentRequestPayload, PaymentRequestResult, PaymentStatusResponse } from "./api"
 import { request } from "https"
 import { config } from "dotenv"
 import { v4 as uuidv4 } from "uuid"
@@ -8,7 +7,19 @@ config({
   path: join(dirname(module.filename), "..", ".env")
 })
 
-function requestPayment(partyId: string): Promise<PaymentRequestResult> {
+const payload = {
+  externalId: "1",
+  currency: "EUR",
+  amount: "100",
+  payer: {
+    partyId: "22966778899",
+    partyIdType: "MSISDN",
+  },
+  payerMessage: "Yello",
+  payeeNote: "Yello"
+}
+
+function requestPayment(): Promise<any> {
   const transactionId = uuidv4()
   const url = "https://sandbox.momodeveloper.mtn.com/collection/v1_0/requesttopay"
   const options = {
@@ -21,29 +32,18 @@ function requestPayment(partyId: string): Promise<PaymentRequestResult> {
       "X-Target-Environment": "sandbox",
     }
   }
-  const payload: PaymentRequestPayload = {
-    amount: "100",
-    currency: "EUR",
-    externalId: "1",
-    payer: {
-      partyIdType: "MSISDN",
-      partyId,
-    },
-    payerMessage: "Yello",
-    payeeNote: "Yello"
-  }
 
   return new Promise((resolve, reject) => {
     const req = request(url, options, (res) => {
-      let result = {
-        statusCode: res.statusCode,
-        responseBody: "",
-        transactionId
-      }
-
       res.setEncoding("utf8")
-      res.on("data", chunk => result.responseBody += chunk)
-      res.on("end", () => resolve(result))
+      let body = ""
+      res.on("data", chunk => body += chunk)
+      res.on("end", () => resolve({
+        statusCode: res.statusCode,
+        headers: res.headers,
+        body,
+        transactionId
+      }))
     })
 
     req.on("error", e => reject(e.message))
@@ -52,7 +52,7 @@ function requestPayment(partyId: string): Promise<PaymentRequestResult> {
   })
 }
 
-function getPaymentStatus(transactionId: string): Promise<PaymentStatusResponse> {
+function getPaymentStatus(transactionId: string): Promise<any> {
   const url = `https://sandbox.momodeveloper.mtn.com/collection/v1_0/requesttopay/${transactionId}`
   const options = {
     method: "get",
@@ -65,33 +65,25 @@ function getPaymentStatus(transactionId: string): Promise<PaymentStatusResponse>
 
   return new Promise((resolve, reject) => {
     const req = request(url, options, (res) => {
-      let body = ""
       res.setEncoding("utf8")
+      let body = ""
       res.on("data", chunk => body += chunk)
-      res.on("end", () => {
-        let result: PaymentStatusResponse = {
-          statusCode: res.statusCode
-        }
-        try {
-          let data = JSON.parse(body)
-          result.data = data
-        } catch (error) {
-        }
-        resolve(result)
-      })
+      res.on("end", () => resolve({
+          statusCode: res.statusCode,
+          headers: res.headers,
+          body
+      }))
     })
-
     req.on("error", e => reject(e.message))
     req.end()
   })
 }
 
 async function main() {
-  const partyId = "22966778899"
   let result
 
   try {
-    result = await requestPayment(partyId)
+    result = await requestPayment()
     if (result.statusCode != 202) {
       console.error(`Payment request failed with status code ${result.statusCode}`)
       console.log(`Response body: ${result.responseBody}`)
@@ -103,29 +95,16 @@ async function main() {
     return
   }
 
-  setTimeout(() => {
-    let promise = getPaymentStatus(result.transactionId)
-    promise.then(obj => {
-      switch (obj.statusCode) {
-      case 200:
-        console.log("Payment status request successful")
-        console.log("Transcation status:", JSON.stringify(obj.data, null, 2))
-        break
-      case 400:
-        console.log("Payment status request rejected with 400 as status code")
-        break
-      case 404:
-        console.log(`Transaction with ID ${result.transactionId} not found`)
-        break
-      case 500:
-        console.log("Payment status request failed due to server error.")
-        break
-       default:
-         console.log(`Payment status request ended with ${obj.statusCode} as status code`)
-      }
-    }).catch(error => {
-      console.log("Status check failed", error)
-    })
+  console.log(`RequestToPay with ID ${result.transactionId} successfully done`)
+  console.log("Waiting 10s before status check...")
+  setTimeout(async () => {
+    let obj = await getPaymentStatus(result.transactionId)
+    if (obj.statusCode != 200) {
+      console.log(`Status request ended with ${obj.statusCode} status code`)
+      return
+    }
+    console.log("Payment status request successful")
+    console.log("Transaction status", JSON.parse(obj.body))
   }, 10000)
 }
 

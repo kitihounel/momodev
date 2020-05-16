@@ -8,21 +8,20 @@ config({
 
 function createToken(): Promise<any> {
   return new Promise((resolve, reject) => {
-    const buf = Buffer.from(`${process.env.API_USER}:${process.env.API_KEY}`)
-    const auth = `Basic ${buf.toString("base64")}`
+    const auth = `${process.env.API_USER}:${process.env.API_KEY}`
 
     const options = {
+      auth,
       hostname: "sandbox.momodeveloper.mtn.com",
       path: "/collection/token",
       method: "post",
       headers: {
-        "Authorization": auth,
         "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
       },
       rejectUnauthorized: false,
       beforeRedirect: (options) => {
+        options.auth = auth
         options.headers = {
-          "Authorization": auth,
           "Ocp-Apim-Subscription-Key": process.env.SUBSCRIPTION_KEY,
         }
       }
