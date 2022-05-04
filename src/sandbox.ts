@@ -18,7 +18,7 @@ export function createUser(subscriptionKey: string, cbHost: string): Promise<str
 
     const req = request(url, options, (resp) => {
       if (resp.statusCode !== 201)
-        reject(`Request failed with status code ${resp.statusCode}`)
+        reject(new Error(`Sandbox user creation failed with status code ${resp.statusCode}`))
       resp.setEncoding('utf8')
       let body = ''
       resp.on('data', chunk => body += chunk)
@@ -44,7 +44,7 @@ export function getApiKey(subscriptionKey: string, user: string): Promise<string
 
     const req = request(url, options, (resp) => {
       if (resp.statusCode !== 201)
-          reject(`Request failed with status code ${resp.statusCode}`)
+          reject(new Error(`Sandbox API key retrieval failed with status code ${resp.statusCode}`))
       resp.setEncoding('utf8')
       let body = ''
       resp.on('data', chunk => body += chunk)
