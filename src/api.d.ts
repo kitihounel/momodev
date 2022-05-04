@@ -1,22 +1,53 @@
-export interface PaymentRequestPayload {
-  amount: string,
-  currency: "EUR",
-  externalId: string,
+export interface RequestToPay {
+  amount: string
+  currency: string
+  externalId: string
   payer: {
-    partyIdType: "MSISDN" | "EMAIL" | "PARTY_CODE"
+    partyIdType: 'MSISDN' | 'EMAIL' | 'PARTY_CODE'
     partyId: string
-  },
-  payerMessage: string,
+  }
+  payerMessage: string
   payeeNote: string
 }
 
-export interface PaymentRequestResult {
-  statusCode: number
-  responseBody: string
-  transactionId: string
+export interface SuccessfulRequestToPay {
+  amount: string
+  currency: string
+  financialTransactionId: string
+  externalId: string
+  payer: {
+    partyIdType: 'MSISDN' | 'EMAIL' | 'PARTY_CODE'
+    partyId: string
+  }
+  status: 'SUCCESSFUL'
 }
 
-export interface PaymentStatusResponse {
-  statusCode: number
-  data?: any
+export interface UnsuccessfulRequestToPay {
+  amount: string
+  currency: string
+  externalId: string
+  payer: {
+    partyIdType: 'MSISDN' | 'EMAIL' | 'PARTY_CODE'
+    partyId: string
+  }
+  status: 'FAILED'
+  reason: {
+    code: string
+    message: string
+  }
+}
+
+export interface PaymentRequestOptions {
+  info: RequestToPay
+  subscriptionKey: string
+  apiToken: string
+  targetEnv: string
+  cbUrl: string | undefined
+}
+
+export interface PaymentStatusRequestParams {
+  transactionId: string
+  subscriptionKey: string
+  apiToken: string
+  targetEnv: string
 }
