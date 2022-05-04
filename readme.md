@@ -1,25 +1,3 @@
-# momodev-api-user
-NodeJS scripts to help testing MTN MoMo API.
+# momodev
 
-## Requirements
-You will need the following packages:
-  - curl
-  - jq
-
-# First step
-Start by running `npm install` and `npm run build` to compile the source files.
-This will create a `build` directory with the scripts.
-
-## Create User
-Create a `.env` file in the root directory with your primary
-subscription key then run `node build/createUser.js`.
-The API user and key generated will then be printed in the console.
-
-You can  append the result to your `.env` file if the script was successful.
-An `update-user.sh` script is provided for that.
-
-## Get Authorization Token
-To generate authorization token, use the `update-token.sh` script.
-The token will be saved in the `.env` file. Tokens are valid for one hour.
-
-## Request to pay
+NodeJS package to deal with MTN MoMo API.
