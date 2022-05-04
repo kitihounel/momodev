@@ -45,7 +45,7 @@ export interface PaymentRequestOptions {
   cbUrl: string | undefined
 }
 
-export interface PaymentStatusRequestParams {
+export interface StatusRequestParams {
   transactionId: string
   subscriptionKey: string
   apiToken: string

@@ -2,7 +2,7 @@ import { https } from 'follow-redirects'
 import { request } from 'https'
 import { v4 as uuidv4 } from 'uuid'
 
-import { PaymentRequestOptions, PaymentStatusRequestParams } from './api'
+import { PaymentRequestOptions, StatusRequestParams } from './api'
 import { getApiHostname } from "./config"
 import {
   InvalidDataError, ServerInternalError, ResourceNotFoundError, InvalidDataReceivedError
@@ -51,7 +51,7 @@ export function getToken(subscriptionKey: string, user: string, apiKey: string):
   })
 }
 
-export function requestPayment(options: PaymentRequestOptions): Promise<string> {
+export function makeRequest(options: PaymentRequestOptions): Promise<string> {
   const transactionId = uuidv4()
   const headers = {
     'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export function requestPayment(options: PaymentRequestOptions): Promise<string> 
   })
 }
 
-export function getPaymentStatus(params: PaymentStatusRequestParams): Promise<any> {
+export function getRequestStatus(params: StatusRequestParams): Promise<any> {
   const reqOptions = {
     hostname: getApiHostname(),
     path: `/collection/v1_0/requesttopay/${params.transactionId}`,
