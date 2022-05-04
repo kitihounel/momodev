@@ -1,5 +1,2 @@
-.env
-keys.ericsson
-keys.mtn
 node_modules
 build
