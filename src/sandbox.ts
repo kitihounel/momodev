@@ -44,7 +44,7 @@ export function getApiKey(subscriptionKey: string, user: string): Promise<string
 
     const req = request(url, options, (resp) => {
       if (resp.statusCode !== 201)
-          reject(new Error(`Sandbox API key retrieval failed with status code ${resp.statusCode}`))
+        reject(new Error(`Sandbox API key retrieval failed with status code ${resp.statusCode}`))
       resp.setEncoding('utf8')
       let body = ''
       resp.on('data', chunk => body += chunk)
@@ -63,8 +63,8 @@ export function getApiKey(subscriptionKey: string, user: string): Promise<string
 }
 
 export async function getCredentials(subscriptionKey: string, cbHost: string) {
-  let user = await createUser(subscriptionKey, cbHost)
-  let apiKey = await getApiKey(subscriptionKey, user)
+  const user = await createUser(subscriptionKey, cbHost)
+  const apiKey = await getApiKey(subscriptionKey, user)
   return {
     user,
     apiKey

@@ -3,7 +3,7 @@ import { request } from 'https'
 import { v4 as uuidv4 } from 'uuid'
 
 import { PaymentRequestOptions, StatusRequestParams } from './api'
-import { getApiHostname } from "./config"
+import { getApiHostname } from './config'
 import {
   InvalidDataError, ServerInternalError, ResourceNotFoundError, InvalidDataReceivedError
 } from './errors'
