@@ -1,13 +1,14 @@
 import { request } from 'https'
 import { v4 as uuidv4 } from 'uuid'
 
-const baseUrl = 'https://sandbox.momodeveloper.mtn.com/v1_0'
+const sandboxHost = 'sandbox.momodeveloper.mtn.com'
 
 export function createUser(subscriptionKey: string, cbHost: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const user = uuidv4()
-    const url = `${baseUrl}/apiuser`
     const options = {
+      hostname: sandboxHost,
+      path: '/v1_0/apiuser',
       method: 'post',
       headers: {
         'content-type': 'application/json',
@@ -16,7 +17,7 @@ export function createUser(subscriptionKey: string, cbHost: string): Promise<str
       }
     }
 
-    const req = request(url, options, (resp) => {
+    const req = request(options, (resp) => {
       if (resp.statusCode !== 201)
         reject(new Error(`Sandbox user creation failed with status code ${resp.statusCode}`))
       resp.setEncoding('utf8')
@@ -25,7 +26,7 @@ export function createUser(subscriptionKey: string, cbHost: string): Promise<str
       resp.on('end', () => resolve(user))
     })
 
-    req.on('error', e => reject(e.message))
+    req.on('error', e => reject(e))
     req.write(JSON.stringify({ providerCallbackHost: cbHost}))
     req.end()
   })
@@ -33,8 +34,9 @@ export function createUser(subscriptionKey: string, cbHost: string): Promise<str
 
 export function getApiKey(subscriptionKey: string, user: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const url = `${baseUrl}/apiuser/${user}/apikey`
     const options = {
+      hostname: sandboxHost,
+      path: `/v1_0/apiuser/${user}/apikey`,
       method: 'post',
       headers: {
         'Ocp-Apim-Subscription-Key': subscriptionKey,
@@ -42,7 +44,7 @@ export function getApiKey(subscriptionKey: string, user: string): Promise<string
       }
     }
 
-    const req = request(url, options, (resp) => {
+    const req = request(options, (resp) => {
       if (resp.statusCode !== 201)
         reject(new Error(`Sandbox API key retrieval failed with status code ${resp.statusCode}`))
       resp.setEncoding('utf8')
@@ -52,12 +54,12 @@ export function getApiKey(subscriptionKey: string, user: string): Promise<string
         try {
           resolve(JSON.parse(body).apiKey)
         } catch {
-          reject('Invalid JSON returned by server')
+          reject(new Error('Invalid JSON returned by server'))
         }
       })
     })
   
-    req.on('error', e => reject(e.message))
+    req.on('error', e => reject(e))
     req.end()
   })
 }

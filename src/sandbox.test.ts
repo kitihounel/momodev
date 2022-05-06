@@ -19,31 +19,30 @@ test('create sandbox user', async () => {
   sandboxUser = user
 })
 
-test('get sandbox user password', async () => {
-  expect(async() => await getApiKey(subscriptionKey, sandboxUser)).toBeTruthy()
+test('get sandbox user API key', async () => {
+  const key = await getApiKey(subscriptionKey, sandboxUser)
+  expect(typeof key).toEqual('string')
 })
 
 test('get sandbox credentials', async () => {
-  const subscriptionKey = process.env.SUBSCRIPTION_KEY
-  const cbHost = process.env.CB_HOST
   const credentials = await getCredentials(subscriptionKey, cbHost)
   expect(credentials).toMatchObject({
     user: expect.stringMatching(uuidv4Regex),
-    apiKey: expect.anything()
+    apiKey: expect.any(String)
   })
 })
 
-test('create user with invalid subscription key should fail', async () => {
+test('create sandbox user with invalid subscription key should fail', async () => {
   expect.assertions(1)
   return createUser('ABCDEF', cbHost).catch(e => expect(e.name).toMatch('Error'))
 })
 
-test('get api key with wrong subscription key should fail', async () => {
+test('get API key with wrong subscription key should fail', async () => {
   expect.assertions(1)
   return getApiKey('ABCDEF', sandboxUser).catch(e => expect(e.name).toMatch('Error'))
 })
 
-test('get api key with invalid user should fail', async () => {
+test('get API key with invalid user should fail', async () => {
   expect.assertions(1)
   return getApiKey(subscriptionKey, 'john-doe').catch(e => expect(e.name).toMatch('Error'))
 })
